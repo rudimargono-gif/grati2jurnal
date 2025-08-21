@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Guru | SMPN 2 Grati</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --info: #560bad;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b5179e);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #f3722c);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(248, 150, 30, 0.3);
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(248, 150, 30, 0.4);
+        }
+        
+        .status-cell {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-cell:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .status-cell::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .status-cell:hover::after {
+            opacity: 1;
+        }
+        
+        .bg-present { background-color: #4ade80; }
+        .bg-task { background-color: #a78bfa; }
+        .bg-absent { background-color: #f87171; }
+        .bg-substitute { background-color: #fb923c; }
+        .bg-empty { background-color: #ffffff; }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .floating-btn {
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+        }
+        
+        .floating-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        
+        .editable-title {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .editable-title:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .editable-title::after {
+            content: '\f044';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .editable-title:hover::after {
+            opacity: 1;
+        }
+
+        /* Schedule table styles */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .schedule-table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+        
+        .schedule-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .schedule-table tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Editable cell */
+        .editable-cell {
+            min-width: 100px;
+        }
+        
+        .editable-cell:focus {
+            outline: 2px solid #4361ee;
+            background-color: #f8fafc;
+        }
+
+        /* Title styles */
+        .main-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+
+        @media (min-width: 768px) {
+            .main-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        header {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+        <div class="flex items-center p-4 rounded-lg shadow-lg bg-white border-l-4 border-blue-500">
+            <div id="toast-icon" class="text-blue-500">
+                <i class="fas fa-info-circle fa-lg"></i>
+            </div>
+            <div id="toast-message" class="ml-3 text-sm font-medium text-gray-800"></div>
+            <button onclick="hideToast()" class="ml-auto text-gray-400 hover:text-gray-500">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-50">
+        <div class="glass-card w-full max-w-md p-8 animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-sign-in-alt mr-2 text-blue-500"></i>
+                    Login Admin
+                </h2>
+                <button onclick="hideLoginModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="username" name="username" class="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" class="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Masukkan password" required>
+                    </div>
+                </div>
+                <button type="submit" class="w-full btn-primary text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Teacher Management Modal -->
+    <div id="teacherModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-50">
+        <div class="glass-card w-full max-w-4xl p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-chalkboard-teacher mr-2 text-blue-500"></i>
+                    Kelola Guru Piket
+                </h2>
+                <button onclick="hideTeacherModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Add Teacher Form -->
+                <div class="glass-card p-4">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle mr-2 text-green-500"></i>
+                        Tambah Guru Piket
+                    </h3>
+                    <div class="flex space-x-2">
+                        <select id="teacherDaySelect" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                        </select>
+                        <input type="text" id="teacherNameInput" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Nama Guru">
+                        <button id="addTeacherButton" class="btn-primary text-white px-4 rounded-lg">
+                            <i class="fas fa-plus mr-1"></i> Tambah
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Teacher List -->
+                <div class="glass-card p-4">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-list-ul mr-2 text-blue-500"></i>
+                        Daftar Guru Piket
+                    </h3>
+                    <div class="space-y-4">
+                        <div id="teacherListContainer">
+                            <!-- Teacher list will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Management Modal -->
+    <div id="scheduleModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-50">
+        <div class="glass-card w-full max-w-5xl p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
+                    Kelola Jadwal Mengajar
+                </h2>
+                <button onclick="hideScheduleModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Add Schedule Form -->
+                <div class="glass-card p-4">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle mr-2 text-green-500"></i>
+                        Tambah Jadwal Mengajar
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <select id="scheduleDaySelect" class="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                        </select>
+                        <input type="text" id="scheduleHourInput" class="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Jam ke (1-8)">
+                        <input type="text" id="scheduleClassInput" class="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Kelas (7A)">
+                        <input type="text" id="scheduleTeacherCodeInput" class="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Kode Guru">
+                        <button id="addScheduleButton" class="btn-primary text-white px-4 rounded-lg md:col-span-4">
+                            <i class="fas fa-plus mr-1"></i> Tambah Jadwal
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Schedule Table -->
+                <div class="glass-card p-4">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-table mr-2 text-blue-500"></i>
+                        Tabel Jadwal Mengajar
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table id="scheduleTable" class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Hari</th>
+                                    <th>Jam ke</th>
+                                    <th>Kelas</th>
+                                    <th>Kode Guru</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Schedule data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header with integrated title -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <div class="flex items-center mb-4 md:mb-0">
+                <div class="bg-white p-3 rounded-xl shadow-md mr-4">
+                    <img src="https://via.placeholder.com/50" alt="Logo Sekolah" class="w-10 h-10">
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">SMP NEGERI 2 GRATI</h1>
+                    <h2 id="mainTitle" class="main-title editable-title">
+                        JURNAL GURU MASUK KELAS
+                    </h2>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div id="currentDateTime" class="bg-white py-2 px-4 rounded-lg shadow-sm text-center">
+                    <div id="date" class="font-medium text-gray-800"></div>
+                    <div id="time" class="text-sm text-gray-600"></div>
+                </div>
+                <button id="loginButton" class="btn-primary text-white py-2 px-4 rounded-lg flex items-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Login
+                </button>
+                <button id="logoutButton" class="btn-danger text-white py-2 px-4 rounded-lg flex items-center hidden">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Card -->
+        <div class="glass-card p-6 mb-8">
+            <!-- Journal Table -->
+            <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-100 mb-4">
+                <table id="journalTable" class="min-w-full bg-white">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                            <th class="py-3 px-4 text-left rounded-tl-xl">No</th>
+                            <!-- Dynamic headers will be inserted here -->
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons (only for admin) -->
+            <div id="actionButtons" class="flex space-x-2 hidden">
+                <button id="printButton" class="bg-white text-gray-700 py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center">
+                    <i class="fas fa-print mr-2"></i>
+                    Cetak
+                </button>
+                <button id="resetButton" class="btn-warning text-white py-2 px-4 rounded-lg flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Teacher On Duty -->
+            <div class="glass-card p-6">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chalkboard-teacher mr-2 text-blue-500"></i>
+                    Guru Piket Hari Ini
+                </h3>
+                <div class="space-y-2">
+                    <div id="currentDay" class="text-sm font-medium text-blue-600 mb-2"></div>
+                    <ul id="teachersOnDuty" class="space-y-2">
+                        <!-- Teachers will be inserted here -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Color Legend -->
+            <div class="glass-card p-6">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-palette mr-2 text-purple-500"></i>
+                    Keterangan Warna
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-full bg-present mr-3"></div>
+                        <span class="text-sm">Hadir</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-full bg-task mr-3"></div>
+                        <span class="text-sm">Tugas</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-full bg-absent mr-3"></div>
+                        <span class="text-sm">Tidak Masuk</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-full bg-substitute mr-3"></div>
+                        <span class="text-sm">Guru Pengganti</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-full bg-white border border-gray-300 mr-3"></div>
+                        <span class="text-sm">Kosong</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Controls -->
+            <div id="adminControls" class="glass-card p-6 hidden">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-user-shield mr-2 text-indigo-500"></i>
+                    Panel Admin
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tambah/Hapus Kelas</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="classNameInput" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Nama Kelas (7H)">
+                            <button id="addClassButton" class="btn-primary text-white px-4 rounded-lg">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button id="removeClassButton" class="btn-danger text-white px-4 rounded-lg">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ubah Judul Jurnal</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="titleInput" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Judul Baru">
+                            <button id="changeTitleButton" class="btn-primary text-white px-4 rounded-lg">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Lihat Rekaman</label>
+                        <div class="flex space-x-2">
+                            <input type="date" id="recordDate" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                            <button id="viewRecordButton" class="btn-warning text-white px-4 rounded-lg">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Kelas Section -->
+                    <div class="pt-4 border-t border-gray-200">
+                        <h4 class="font-medium text-gray-700 mb-2">Password Kelas</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Kelas</label>
+                                <select id="classSelect" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Pilih Kelas</option>
+                                    <!-- Opsi kelas akan diisi oleh JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Password</label>
+                                <div class="flex space-x-2">
+                                    <input type="password" id="classPasswordInput" class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Password baru">
+                                    <button id="setClassPasswordButton" class="btn-primary text-white px-4 rounded-lg">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <button id="manageTeachersButton" class="btn-primary text-white w-full py-2 px-4 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chalkboard-teacher mr-2"></i>
+                            Kelola Guru Piket
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <button id="manageScheduleButton" class="btn-primary text-white w-full py-2 px-4 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            Kelola Jadwal Mengajar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data guru dengan format yang konsisten
+        const teacherData = {
+            "Senin": [
+                "AGUSTINI INDAH SUPRAPTI, S.Pd.",
+                "MUCHAMMAD MUCHLIS, S.Pd.",
+                "NAWAWI",
+                "ANDINI KURNIASIH, S.Sos.",
+                "SINNDIT AL LUHURI, S.Pd.",
+                "SURYA INDRIANI, S.Pd."                
+            ],
+            "Selasa": [
+                "S. A. N. O. T. O., S.Pd.",
+                "TANGGU SETYA BAKTI, S.Pd.",
+                "FARIDHA RAHMAWATI, S.Pd.I",
+                "DIAN FITRA FAJARINA, S.Pd.",
+                "FATIAMATUZZAHRO, S.Pd.",
+                "PUTRI MERDEKAWATI"
+            ],
+            "Rabu": [
+                "TOTOK TRIANTO, S.Pd.",
+                "WAHYUNINGATI, Dra.",
+                "DYAH MURNIATI, S.Pd.",
+                "NADYA AFIQAMA W., S.Pd.",
+                "KISWOROWATI, S.Pd.",
+                "DWI NOVA ANDRI W., S.Kom."                
+            ],
+            "Kamis": [
+                "F. A. T. K. H. I. A. T. I., Dra., M.Pd.I",
+                "M. NURWAHYU HIDAYAT, S.Pd.",
+                "ANY WIDAYATI, Dra.",
+                "SITI SURURIN, S.Pd.",
+                "M. ALFIAN NUR, S.Pd.",
+                "HARIYANTO, S.Pd.",
+                "FIHRIN LUQIYYAH S., M.Pd."
+            ],
+            "Jumat": [
+                "UM'Y A N A H, S.Pd.",
+                "OKY CHANDRA APRILIA, S.Pd.",
+                "SUHARSO, S.Pd.",
+                "DEWI ANJAR SARI, S.Pd.",
+                "TIN WAHYUNI PAHLAWATI, S.Pd.",
+                "MUKHAMMAD ARIFIANTO, S.Pd."
+            ],
+            "Sabtu": [
+                "RUDI MARGONO, S.T.",
+                "RISQI MARDIANA, S.Pd.",
+                "QIVI ULYAH, S.Pd.",
+                "RINI UTAMI, S.Pd.",
+                "SISKA DWI VIDIA NINGSIH, S.Pd.",
+                "MIRZA ADITYAWAN, S.Pd."
+            ],
+            "Minggu": []
+        };
+
+        // Data jadwal mengajar
+        let teachingSchedule = [];
+
+        // Data kode guru
+        const teacherCodes = {
+            "AGUS": "AGUSTINI INDAH SUPRAPTI, S.Pd.",
+            "MUCH": "MUCHAMMAD MUCHLIS, S.Pd.",
+            "NAWA": "NAWAWI",
+            "ANDI": "ANDINI KURNIASIH, S.Sos.",
+            "SIND": "SINNDIT AL LUHURI, S.Pd.",
+            "SURY": "SURYA INDRIANI, S.Pd.",
+            "SANO": "S. A. N. O. T. O., S.Pd.",
+            "TANG": "TANGGU SETYA BAKTI, S.Pd.",
+            "FARI": "FARIDHA RAHMAWATI, S.Pd.I",
+            "DIAN": "DIAN FITRA FAJARINA, S.Pd.",
+            "FATI": "FATIAMATUZZAHRO, S.Pd.",
+            "PUTR": "PUTRI MERDEKAWATI",
+            "TOTO": "TOTOK TRIANTO, S.Pd.",
+            "WAHY": "WAHYUNINGATI, Dra.",
+            "DYAH": "DYAH MURNIATI, S.Pd.",
+            "NADY": "NADYA AFIQAMA W., S.Pd.",
+            "KISW": "KISWOROWATI, S.Pd.",
+            "DWI": "DWI NOVA ANDRI W., S.Kom.",
+            "FATH": "F. A. T. K. H. I. A. T. I., Dra., M.Pd.I",
+            "NURW": "M. NURWAHYU HIDAYAT, S.Pd.",
+            "ANY": "ANY WIDAYATI, Dra.",
+            "SITI": "SITI SURURIN, S.Pd.",
+            "ALFI": "M. ALFIAN NUR, S.Pd.",
+            "HARI": "HARIYANTO, S.Pd.",
+            "FIHR": "FIHRIN LUQIYYAH S., M.Pd.",
+            "UMY": "UM'Y A N A H, S.Pd.",
+            "OKY": "OKY CHANDRA APRILIA, S.Pd.",
+            "SUHA": "SUHARSO, S.Pd.",
+            "DEWI": "DEWI ANJAR SARI, S.Pd.",
+            "TIN": "TIN WAHYUNI PAHLAWATI, S.Pd.",
+            "ARIF": "MUKHAMMAD ARIFIANTO, S.Pd.",
+            "RUDI": "RUDI MARGONO, S.T.",
+            "RISQ": "RISQI MARDIANA, S.Pd.",
+            "QIVI": "QIVI ULYAH, S.Pd.",
+            "RINI": "RINI UTAMI, S.Pd.",
+            "SISK": "SISKA DWI VIDIA NINGSIH, S.Pd.",
+            "MIRZ": "MIRZA ADITYAWAN, S.Pd."
+        };
+
+        // User data (dalam produksi sebaiknya menggunakan backend)
+        const users = {
+            "admin": { 
+                password: "admin123", 
+                allowedColumns: ["all"],
+                isAdmin: true 
+            }
+            // Akun kelas akan dibuat dinamis berdasarkan classPasswords
+        };
+
+        // Variabel global
+        let currentUser = null;
+        const defaultColumnHeaders = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "8A", "8B", "8C", "8D", "8E", "8F", "9A", "9B", "9C", "9D", "9E", "9F", "9G"];
+        let columnHeaders = [];
+        let lastRecordedDate = null;
+        let classPasswords = {};
+
+        // DOM Elements
+        const elements = {
+            loginModal: document.getElementById('loginModal'),
+            loginForm: document.getElementById('loginForm'),
+            loginButton: document.getElementById('loginButton'),
+            logoutButton: document.getElementById('logoutButton'),
+            toast: document.getElementById('toast'),
+            toastMessage: document.getElementById('toast-message'),
+            toastIcon: document.getElementById('toast-icon'),
+            currentDateTime: document.getElementById('currentDateTime'),
+            date: document.getElementById('date'),
+            time: document.getElementById('time'),
+            journalTable: document.getElementById('journalTable'),
+            mainTitle: document.getElementById('mainTitle'),
+            currentDay: document.getElementById('currentDay'),
+            teachersOnDuty: document.getElementById('teachersOnDuty'),
+            adminControls: document.getElementById('adminControls'),
+            actionButtons: document.getElementById('actionButtons'),
+            resetButton: document.getElementById('resetButton'),
+            printButton: document.getElementById('printButton'),
+            classNameInput: document.getElementById('classNameInput'),
+            addClassButton: document.getElementById('addClassButton'),
+            removeClassButton: document.getElementById('removeClassButton'),
+            titleInput: document.getElementById('titleInput'),
+            changeTitleButton: document.getElementById('changeTitleButton'),
+            recordDate: document.getElementById('recordDate'),
+            viewRecordButton: document.getElementById('viewRecordButton'),
+            teacherModal: document.getElementById('teacherModal'),
+            teacherDaySelect: document.getElementById('teacherDaySelect'),
+            teacherNameInput: document.getElementById('teacherNameInput'),
+            addTeacherButton: document.getElementById('addTeacherButton'),
+            teacherListContainer: document.getElementById('teacherListContainer'),
+            scheduleModal: document.getElementById('scheduleModal'),
+            scheduleDaySelect: document.getElementById('scheduleDaySelect'),
+            scheduleHourInput: document.getElementById('scheduleHourInput'),
+            scheduleClassInput: document.getElementById('scheduleClassInput'),
+            scheduleTeacherCodeInput: document.getElementById('scheduleTeacherCodeInput'),
+            addScheduleButton: document.getElementById('addScheduleButton'),
+            scheduleTable: document.getElementById('scheduleTable'),
+            manageTeachersButton: document.getElementById('manageTeachersButton'),
+            manageScheduleButton: document.getElementById('manageScheduleButton'),
+            classSelect: document.getElementById('classSelect'),
+            classPasswordInput: document.getElementById('classPasswordInput'),
+            setClassPasswordButton: document.getElementById('setClassPasswordButton')
+        };
+
+        // Fungsi untuk menampilkan notifikasi
+        function showToast(message, type = 'info') {
+            const typeClasses = {
+                info: 'text-blue-500 border-blue-500',
+                success: 'text-green-500 border-green-500',
+                warning: 'text-yellow-500 border-yellow-500',
+                error: 'text-red-500 border-red-500'
+            };
+            
+            const typeIcons = {
+                info: 'fa-info-circle',
+                success: 'fa-check-circle',
+                warning: 'fa-exclamation-triangle',
+                error: 'fa-times-circle'
+            };
+            
+            elements.toast.className = `fixed bottom-6 right-6 z-50 flex items-center p-4 rounded-lg shadow-lg bg-white border-l-4 ${typeClasses[type]}`;
+            elements.toastIcon.className = `${typeIcons[type]} fa-lg ${typeClasses[type].split(' ')[0]}`;
+            elements.toastMessage.textContent = message;
+            elements.toast.classList.remove('hidden');
+            
+            setTimeout(hideToast, 5000);
+        }
+
+        function hideToast() {
+            elements.toast.classList.add('hidden');
+        }
+
+        // Fungsi untuk menampilkan modal login
+        function showLoginModal() {
+            elements.loginModal.classList.remove('hidden');
+        }
+
+        function hideLoginModal() {
+            elements.loginModal.classList.add('hidden');
+        }
+
+        // Fungsi untuk menampilkan modal guru
+        function showTeacherModal() {
+            renderTeacherList();
+            elements.teacherModal.classList.remove('hidden');
+        }
+
+        function hideTeacherModal() {
+            elements.teacherModal.classList.add('hidden');
+        }
+
+        // Fungsi untuk menampilkan modal jadwal
+        function showScheduleModal() {
+            renderScheduleTable();
+            elements.scheduleModal.classList.remove('hidden');
+        }
+
+        function hideScheduleModal() {
+            elements.scheduleModal.classList.add('hidden');
+        }
+
+        // Fungsi untuk mengupdate tanggal dan waktu
+        function updateDateTime() {
+            const now = new Date();
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const dayName = days[now.getDay()];
+            const date = now.toLocaleDateString('id-ID', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            const time = now.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            elements.date.textContent = `${dayName}, ${date}`;
+            elements.time.textContent = time;
+
+            // Update teacher on duty
+            updateTeachersOnDuty(dayName);
+
+            // Check if we need to record today's data
+            checkDailyRecording(now);
+
+            // Update jurnal with schedule data
+            updateJournalWithSchedule(dayName);
+        }
+
+        // Fungsi untuk mengupdate jurnal dengan data jadwal
+        function updateJournalWithSchedule(dayName) {
+            const todaySchedule = teachingSchedule.filter(item => item.day === dayName);
+            
+            todaySchedule.forEach(schedule => {
+                const rowIndex = schedule.hour - 1;
+                const columnName = schedule.class;
+                const columnIndex = columnHeaders.indexOf(columnName);
+                
+                if (columnIndex !== -1 && rowIndex >= 0 && rowIndex < 8) {
+                    const rows = elements.journalTable.querySelectorAll('tbody tr');
+                    if (rows[rowIndex]) {
+                        const cells = rows[rowIndex].querySelectorAll('td[data-status]');
+                        if (cells[columnIndex]) {
+                            const teacherName = teacherCodes[schedule.teacherCode] || schedule.teacherCode;
+                            cells[columnIndex].innerHTML = `<div class="text-xs font-medium">${teacherName}</div>`;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fungsi untuk mengecek dan melakukan rekaman harian
+        function checkDailyRecording(currentDate) {
+            const today = currentDate.toISOString().split('T')[0];
+            const dayOfWeek = currentDate.getDay(); // 0 = Minggu, 1 = Senin, dst.
+
+            // Skip Sunday
+            if (dayOfWeek === 0) return;
+
+            // Check if we've already recorded today
+            if (lastRecordedDate === today) return;
+
+            // Check if we have data to record
+            const hasData = Array.from(elements.journalTable.querySelectorAll('tbody td[data-status]'))
+                .some(cell => cell.dataset.status !== 'empty');
+
+            if (hasData) {
+                // Save today's data
+                const recordKey = `record_${today}`;
+                const recordData = {};
+
+                // Collect all cell data
+                const rows = elements.journalTable.querySelectorAll('tbody tr');
+                rows.forEach((row, rowIndex) => {
+                    const cells = row.querySelectorAll('td[data-status]');
+                    cells.forEach((cell, cellIndex) => {
+                        const columnName = columnHeaders[cellIndex];
+                        const status = cell.dataset.status;
+                        const note = cell.textContent.trim();
+                        
+                        if (!recordData[rowIndex]) recordData[rowIndex] = {};
+                        recordData[rowIndex][columnName] = { status, note };
+                    });
+                });
+
+                // Save to localStorage
+                localStorage.setItem(recordKey, JSON.stringify(recordData));
+                lastRecordedDate = today;
+                localStorage.setItem('lastRecordedDate', today);
+
+                showToast(`Data harian telah direkam untuk tanggal ${today}`, 'success');
+            }
+        }
+
+        // Fungsi untuk mengupdate daftar guru piket
+        function updateTeachersOnDuty(dayName) {
+            elements.currentDay.textContent = dayName;
+            elements.teachersOnDuty.innerHTML = '';
+            
+            const teachers = teacherData[dayName] || [];
+            if (teachers.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'text-sm text-gray-500 italic';
+                li.textContent = 'Tidak ada guru piket hari ini';
+                elements.teachersOnDuty.appendChild(li);
+                return;
+            }
+            
+            teachers.forEach(teacher => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start';
+                li.innerHTML = `
+                    <span class="flex-shrink-0 w-2 h-2 mt-2 mr-2 rounded-full bg-blue-500"></span>
+                    <span class="text-sm">${teacher}</span>
+                `;
+                elements.teachersOnDuty.appendChild(li);
+            });
+        }
+
+        // Fungsi untuk merender daftar guru piket
+        function renderTeacherList() {
+            elements.teacherListContainer.innerHTML = '';
+            
+            Object.keys(teacherData).forEach(day => {
+                if (day === 'Minggu') return;
+                
+                const dayContainer = document.createElement('div');
+                dayContainer.className = 'mb-4';
+                
+                const dayTitle = document.createElement('h4');
+                dayTitle.className = 'font-medium text-gray-800 mb-2';
+                dayTitle.textContent = day;
+                dayContainer.appendChild(dayTitle);
+                
+                const teacherList = document.createElement('ul');
+                teacherList.className = 'space-y-2';
+                
+                teacherData[day].forEach((teacher, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center justify-between bg-gray-50 p-2 rounded';
+                    
+                    const teacherName = document.createElement('span');
+                    teacherName.className = 'text-sm';
+                    teacherName.textContent = teacher;
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'text-red-500 hover:text-red-700';
+                    deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                    deleteButton.onclick = () => removeTeacher(day, index);
+                    
+                    li.appendChild(teacherName);
+                    li.appendChild(deleteButton);
+                    teacherList.appendChild(li);
+                });
+                
+                dayContainer.appendChild(teacherList);
+                elements.teacherListContainer.appendChild(dayContainer);
+            });
+        }
+
+        // Fungsi untuk menambah guru piket
+        function addTeacher() {
+            const day = elements.teacherDaySelect.value;
+            const name = elements.teacherNameInput.value.trim();
+            
+            if (!name) {
+                showToast('Nama guru tidak boleh kosong', 'error');
+                return;
+            }
+            
+            teacherData[day].push(name);
+            renderTeacherList();
+            updateTeachersOnDuty(elements.currentDay.textContent);
+            elements.teacherNameInput.value = '';
+            showToast(`Guru ${name} berhasil ditambahkan untuk hari ${day}`, 'success');
+            
+            // Simpan ke localStorage
+            localStorage.setItem('teacherData', JSON.stringify(teacherData));
+        }
+
+        // Fungsi untuk menghapus guru piket
+        function removeTeacher(day, index) {
+            const teacherName = teacherData[day][index];
+            teacherData[day].splice(index, 1);
+            renderTeacherList();
+            updateTeachersOnDuty(elements.currentDay.textContent);
+            showToast(`Guru ${teacherName} berhasil dihapus dari hari ${day}`, 'success');
+            
+            // Simpan ke localStorage
+            localStorage.setItem('teacherData', JSON.stringify(teacherData));
+        }
+
+        // Fungsi untuk merender tabel jadwal
+        function renderScheduleTable() {
+            const tbody = elements.scheduleTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            teachingSchedule.forEach((schedule, index) => {
+                const tr = document.createElement('tr');
+                
+                const dayTd = document.createElement('td');
+                dayTd.textContent = schedule.day;
+                
+                const hourTd = document.createElement('td');
+                hourTd.textContent = schedule.hour;
+                
+                const classTd = document.createElement('td');
+                classTd.textContent = schedule.class;
+                
+                const teacherTd = document.createElement('td');
+                teacherTd.textContent = schedule.teacherCode;
+                
+                const actionTd = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'text-red-500 hover:text-red-700';
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.onclick = () => removeSchedule(index);
+                actionTd.appendChild(deleteButton);
+                
+                tr.appendChild(dayTd);
+                tr.appendChild(hourTd);
+                tr.appendChild(classTd);
+                tr.appendChild(teacherTd);
+                tr.appendChild(actionTd);
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Fungsi untuk menambah jadwal mengajar
+        function addSchedule() {
+            const day = elements.scheduleDaySelect.value;
+            const hour = parseInt(elements.scheduleHourInput.value);
+            const className = elements.scheduleClassInput.value.trim().toUpperCase();
+            const teacherCode = elements.scheduleTeacherCodeInput.value.trim().toUpperCase();
+            
+            if (!day || !hour || !className || !teacherCode) {
+                showToast('Semua field harus diisi', 'error');
+                return;
+            }
+            
+            if (hour < 1 || hour > 8) {
+                showToast('Jam ke harus antara 1-8', 'error');
+                return;
+            }
+            
+            if (!columnHeaders.includes(className)) {
+                showToast(`Kelas ${className} tidak ditemukan`, 'error');
+                return;
+            }
+            
+            teachingSchedule.push({
+                day,
+                hour,
+                class: className,
+                teacherCode
+            });
+            
+            saveTeachingSchedule();
+            renderScheduleTable();
+            elements.scheduleHourInput.value = '';
+            elements.scheduleClassInput.value = '';
+            elements.scheduleTeacherCodeInput.value = '';
+            
+            const teacherName = teacherCodes[teacherCode] || teacherCode;
+            showToast(`Jadwal untuk ${teacherName} di kelas ${className} jam ke-${hour} berhasil ditambahkan`, 'success');
+            
+            // Update jurnal
+            updateJournalWithSchedule(day);
+        }
+
+        // Fungsi untuk menghapus jadwal mengajar
+        function removeSchedule(index) {
+            const schedule = teachingSchedule[index];
+            teachingSchedule.splice(index, 1);
+            saveTeachingSchedule();
+            renderScheduleTable();
+            
+            const teacherName = teacherCodes[schedule.teacherCode] || schedule.teacherCode;
+            showToast(`Jadwal untuk ${teacherName} di kelas ${schedule.class} jam ke-${schedule.hour} berhasil dihapus`, 'success');
+            
+            // Update jurnal
+            updateJournalWithSchedule(schedule.day);
+        }
+
+        // Fungsi untuk menyimpan jadwal mengajar
+        function saveTeachingSchedule() {
+            localStorage.setItem('teachingSchedule', JSON.stringify(teachingSchedule));
+        }
+
+        // Fungsi untuk memuat jadwal mengajar
+        function loadTeachingSchedule() {
+            const savedSchedule = localStorage.getItem('teachingSchedule');
+            if (savedSchedule) {
+                teachingSchedule = JSON.parse(savedSchedule);
+            }
+        }
+
+        // Fungsi untuk menyimpan judul ke localStorage
+        function saveTitle(title) {
+            localStorage.setItem('journalTitle', title);
+        }
+
+        // Fungsi untuk memuat judul dari localStorage
+        function loadTitle() {
+            const savedTitle = localStorage.getItem('journalTitle');
+            if (savedTitle) {
+                elements.mainTitle.textContent = savedTitle;
+            }
+        }
+
+        // Fungsi untuk menyimpan header kolom ke localStorage
+        function saveColumnHeaders() {
+            localStorage.setItem('columnHeaders', JSON.stringify(columnHeaders));
+        }
+
+        // Fungsi untuk memuat header kolom dari localStorage
+        function loadColumnHeaders() {
+            const savedHeaders = localStorage.getItem('columnHeaders');
+            columnHeaders = savedHeaders ? JSON.parse(savedHeaders) : [...defaultColumnHeaders];
+            saveColumnHeaders();
+        }
+
+        // Fungsi untuk memuat data guru dari localStorage
+        function loadTeacherData() {
+            const savedTeacherData = localStorage.getItem('teacherData');
+            if (savedTeacherData) {
+                Object.assign(teacherData, JSON.parse(savedTeacherData));
+            }
+        }
+
+        // Fungsi untuk memuat tanggal terakhir direkam
+        function loadLastRecordedDate() {
+            lastRecordedDate = localStorage.getItem('lastRecordedDate');
+        }
+
+        // Fungsi untuk memuat password kelas dari localStorage
+        function loadClassPasswords() {
+            const savedPasswords = localStorage.getItem('classPasswords');
+            if (savedPasswords) {
+                classPasswords = JSON.parse(savedPasswords);
+                
+                // Buat akun untuk setiap kelas
+                Object.keys(classPasswords).forEach(className => {
+                    users[`siswa${className}`] = {
+                        password: classPasswords[className],
+                        allowedColumns: [className],
+                        isAdmin: false
+                    };
+                });
+            } else {
+                // Inisialisasi default jika belum ada
+                classPasswords = {};
+                defaultColumnHeaders.forEach(className => {
+                    const defaultPass = `pass${className.toLowerCase()}`;
+                    classPasswords[className] = defaultPass;
+                    users[`siswa${className}`] = {
+                        password: defaultPass,
+                        allowedColumns: [className],
+                        isAdmin: false
+                    };
+                });
+                saveClassPasswords();
+            }
+        }
+
+        // Fungsi untuk menyimpan password kelas ke localStorage
+        function saveClassPasswords() {
+            localStorage.setItem('classPasswords', JSON.stringify(classPasswords));
+        }
+
+        // Fungsi untuk mengisi dropdown kelas
+        function populateClassSelect() {
+            elements.classSelect.innerHTML = '<option value="">Pilih Kelas</option>';
+            columnHeaders.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                elements.classSelect.appendChild(option);
+            });
+        }
+
+        // Fungsi untuk mengatur password kelas
+        function setClassPassword() {
+            const className = elements.classSelect.value;
+            const password = elements.classPasswordInput.value.trim();
+            
+            if (!className) {
+                showToast('Silakan pilih kelas terlebih dahulu', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showToast('Password tidak boleh kosong', 'error');
+                return;
+            }
+            
+            classPasswords[className] = password;
+            saveClassPasswords();
+            
+            // Update user data untuk kelas ini
+            if (!users[`siswa${className}`]) {
+                users[`siswa${className}`] = {
+                    password: password,
+                    allowedColumns: [className],
+                    isAdmin: false
+                };
+            } else {
+                users[`siswa${className}`].password = password;
+            }
+            
+            showToast(`Password untuk kelas ${className} berhasil diupdate`, 'success');
+            elements.classPasswordInput.value = '';
+        }
+
+        // Fungsi untuk membuat header tabel
+        function createTableHeaders() {
+            const thead = elements.journalTable.querySelector('thead tr');
+            thead.innerHTML = '<th class="py-3 px-4 text-left rounded-tl-xl">No</th>';
+            
+            columnHeaders.forEach((header, index) => {
+                const th = document.createElement('th');
+                th.className = 'py-3 px-4 text-left';
+                th.textContent = header;
+                
+                if (index === columnHeaders.length - 1) {
+                    th.classList.add('rounded-tr-xl');
+                }
+                
+                thead.appendChild(th);
+            });
+        }
+
+        // Fungsi untuk membuat isi tabel
+        function createTable(readOnlyMode = false) {
+            createTableHeaders();
+            const tbody = elements.journalTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            for (let i = 0; i < 8; i++) {
+                const tr = document.createElement('tr');
+                tr.className = i % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                
+                // Nomor baris
+                const tdNumber = document.createElement('td');
+                tdNumber.className = 'py-3 px-4 font-medium text-gray-700';
+                tdNumber.textContent = i + 1;
+                tr.appendChild(tdNumber);
+                
+                // Sel untuk setiap kelas
+                columnHeaders.forEach(columnName => {
+                    const td = document.createElement('td');
+                    td.className = 'py-3 px-4 status-cell';
+                    
+                    // Cek apakah sel bisa diedit
+                    const canEdit = !readOnlyMode && currentUser && 
+                                  (currentUser.allowedColumns.includes('all') || 
+                                   currentUser.allowedColumns.includes(columnName));
+                    
+                    if (canEdit) {
+                        td.addEventListener('click', changeCellStatus);
+                        td.addEventListener('dblclick', editCellNote);
+                    } else {
+                        td.classList.add('opacity-80');
+                    }
+                    
+                    // Load status dan catatan dari localStorage
+                    const statusKey = `cell_${i}_${columnName}_status`;
+                    const noteKey = `cell_${i}_${columnName}_note`;
+                    const status = localStorage.getItem(statusKey) || 'empty';
+                    const note = localStorage.getItem(noteKey) || '';
+                    
+                    // Set status dan kelas CSS
+                    td.dataset.status = status;
+                    td.className += ` bg-${status}`;
+                    
+                    // Tambahkan catatan jika ada
+                    if (note) {
+                        td.innerHTML = `<div class="text-xs font-medium">${note}</div>`;
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Fungsi untuk mengubah status sel
+        function changeCellStatus(event) {
+            const cell = event.target;
+            const statusOrder = ['empty', 'present', 'task', 'absent', 'substitute'];
+            const currentStatus = cell.dataset.status || 'empty';
+            const currentIndex = statusOrder.indexOf(currentStatus);
+            const nextIndex = (currentIndex + 1) % statusOrder.length;
+            const nextStatus = statusOrder[nextIndex];
+            
+            // Update status dan kelas CSS
+            cell.dataset.status = nextStatus;
+            cell.className = cell.className.replace(/bg-\w+/, `bg-${nextStatus}`) + ' status-cell';
+            
+            // Simpan ke localStorage
+            const rowIndex = cell.parentElement.rowIndex - 1;
+            const cellIndex = cell.cellIndex - 1;
+            const columnName = columnHeaders[cellIndex];
+            
+            localStorage.setItem(`cell_${rowIndex}_${columnName}_status`, nextStatus);
+        }
+
+        // Fungsi untuk mengedit catatan sel
+        function editCellNote(event) {
+            const cell = event.target;
+            const currentNote = cell.textContent.trim();
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentNote;
+            input.className = 'w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500';
+            
+            cell.innerHTML = '';
+            cell.appendChild(input);
+            input.focus();
+            
+            function saveNote() {
+                const newNote = input.value.trim();
+                cell.textContent = newNote;
+                
+                // Simpan ke localStorage
+                const rowIndex = cell.parentElement.rowIndex - 1;
+                const cellIndex = cell.cellIndex - 1;
+                const columnName = columnHeaders[cellIndex];
+                
+                if (newNote) {
+                    localStorage.setItem(`cell_${rowIndex}_${columnName}_note`, newNote);
+                } else {
+                    localStorage.removeItem(`cell_${rowIndex}_${columnName}_note`);
+                }
+            }
+            
+            input.addEventListener('blur', saveNote);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveNote();
+                }
+            });
+        }
+
+        // Fungsi untuk reset semua sel
+        function resetAllCells() {
+            if (!confirm('Apakah Anda yakin ingin mereset semua data?')) return;
+            
+            const cells = elements.journalTable.querySelectorAll('tbody td[data-status]');
+            cells.forEach(cell => {
+                cell.dataset.status = 'empty';
+                cell.className = cell.className.replace(/bg-\w+/, 'bg-empty') + ' status-cell';
+                cell.textContent = '';
+                
+                // Hapus dari localStorage
+                const rowIndex = cell.parentElement.rowIndex - 1;
+                const cellIndex = cell.cellIndex - 1;
+                const columnName = columnHeaders[cellIndex];
+                
+                localStorage.removeItem(`cell_${rowIndex}_${columnName}_status`);
+                localStorage.removeItem(`cell_${rowIndex}_${columnName}_note`);
+            });
+            
+            showToast('Semua data telah direset', 'success');
+        }
+
+        // Fungsi untuk menambah kelas
+        function addClass() {
+            const className = elements.classNameInput.value.trim().toUpperCase();
+            
+            if (!className) {
+                showToast('Nama kelas tidak boleh kosong', 'error');
+                return;
+            }
+            
+            if (columnHeaders.includes(className)) {
+                showToast(`Kelas ${className} sudah ada`, 'warning');
+                return;
+            }
+            
+            // Tambahkan kelas sesuai urutan
+            const classNumber = className.charAt(0);
+            const sameNumberClasses = columnHeaders.filter(h => h.startsWith(classNumber));
+            
+            if (sameNumberClasses.length > 0) {
+                const lastIndex = columnHeaders.lastIndexOf(sameNumberClasses[sameNumberClasses.length - 1]);
+                columnHeaders.splice(lastIndex + 1, 0, className);
+            } else {
+                columnHeaders.push(className);
+            }
+            
+            saveColumnHeaders();
+            createTable(currentUser ? false : true);
+            elements.classNameInput.value = '';
+            showToast(`Kelas ${className} berhasil ditambahkan`, 'success');
+        }
+
+        // Fungsi untuk menghapus kelas
+        function removeClass() {
+            const className = elements.classNameInput.value.trim().toUpperCase();
+            
+            if (!className) {
+                showToast('Nama kelas tidak boleh kosong', 'error');
+                return;
+            }
+            
+            // Jika input hanya angka (misal "7"), hapus kelas terakhir dengan angka tersebut
+            if (/^\d+$/.test(className)) {
+                const sameNumberClasses = columnHeaders.filter(h => h.startsWith(className));
+                
+                if (sameNumberClasses.length === 0) {
+                    showToast(`Tidak ada kelas dengan angka ${className}`, 'error');
+                    return;
+                }
+                
+                const lastClass = sameNumberClasses[sameNumberClasses.length - 1];
+                
+                if (defaultColumnHeaders.includes(lastClass)) {
+                    showToast(`Kelas ${lastClass} adalah kelas default dan tidak dapat dihapus`, 'warning');
+                    return;
+                }
+                
+                columnHeaders = columnHeaders.filter(name => name !== lastClass);
+                showToast(`Kelas ${lastClass} berhasil dihapus`, 'success');
+            } 
+            // Jika input lengkap (misal "7A")
+            else {
+                if (!columnHeaders.includes(className)) {
+                    showToast(`Kelas ${className} tidak ditemukan`, 'error');
+                    return;
+                }
+                
+                if (defaultColumnHeaders.includes(className)) {
+                    showToast(`Kelas ${className} adalah kelas default dan tidak dapat dihapus`, 'warning');
+                    return;
+                }
+                
+                columnHeaders = columnHeaders.filter(name => name !== className);
+                showToast(`Kelas ${className} berhasil dihapus`, 'success');
+            }
+            
+            // Hapus data dari localStorage
+            for (let i = 0; i < 8; i++) {
+                localStorage.removeItem(`cell_${i}_${className}_status`);
+                localStorage.removeItem(`cell_${i}_${className}_note`);
+            }
+            
+            saveColumnHeaders();
+            createTable(currentUser ? false : true);
+            elements.classNameInput.value = '';
+        }
+
+        // Fungsi untuk mengubah judul
+        function changeTitle() {
+            const newTitle = elements.titleInput.value.trim();
+            
+            if (!newTitle) {
+                showToast('Judul tidak boleh kosong', 'error');
+                return;
+            }
+            
+            elements.mainTitle.textContent = newTitle;
+            saveTitle(newTitle);
+            elements.titleInput.value = '';
+            showToast('Judul berhasil diubah', 'success');
+        }
+
+        // Fungsi untuk melihat rekaman
+        function viewRecord() {
+            const date = elements.recordDate.value;
+            
+            if (!date) {
+                showToast('Silakan pilih tanggal terlebih dahulu', 'warning');
+                return;
+            }
+            
+            const recordKey = `record_${date}`;
+            const recordData = localStorage.getItem(recordKey);
+            
+            if (!recordData) {
+                showToast(`Tidak ada data yang tersimpan untuk tanggal ${date}`, 'error');
+                return;
+            }
+            
+            // Implementasi loading record dari localStorage
+            const data = JSON.parse(recordData);
+            
+            // Update tabel dengan data yang direkam
+            const rows = elements.journalTable.querySelectorAll('tbody tr');
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('td[data-status]');
+                cells.forEach((cell, cellIndex) => {
+                    const columnName = columnHeaders[cellIndex];
+                    const cellData = data[rowIndex]?.[columnName];
+                    
+                    if (cellData) {
+                        cell.dataset.status = cellData.status;
+                        cell.className = cell.className.replace(/bg-\w+/, `bg-${cellData.status}`) + ' status-cell';
+                        cell.innerHTML = cellData.note ? `<div class="text-xs font-medium">${cellData.note}</div>` : '';
+                    }
+                });
+            });
+            
+            showToast(`Data untuk tanggal ${date} berhasil dimuat`, 'success');
+        }
+
+        // Fungsi untuk mencetak jurnal
+        function printJournal() {
+            window.print();
+        }
+
+        // Fungsi untuk menangani login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = elements.loginForm.username.value;
+            const password = elements.loginForm.password.value;
+            
+            if (users[username] && users[username].password === password) {
+                currentUser = {
+                    username: username,
+                    ...users[username]
+                };
+                
+                const welcomeMessage = users[username].isAdmin 
+                    ? `Selamat datang Admin ${username}`
+                    : `Selamat datang di akun Kelas ${username.replace('siswa', '')}`;
+                
+                showToast(welcomeMessage, 'success');
+                hideLoginModal();
+                updateUI();
+            } else {
+                showToast('Username atau password salah', 'error');
+            }
+            
+            elements.loginForm.reset();
+        }
+
+        // Fungsi untuk logout
+        function handleLogout() {
+            currentUser = null;
+            showToast('Anda telah logout', 'info');
+            updateUI();
+        }
+
+        // Fungsi untuk mengupdate UI berdasarkan status login
+        function updateUI() {
+            if (currentUser) {
+                elements.loginButton.classList.add('hidden');
+                elements.logoutButton.classList.remove('hidden');
+                
+                if (currentUser.isAdmin) {
+                    elements.adminControls.classList.remove('hidden');
+                    elements.actionButtons.classList.remove('hidden');
+                    
+                    // Tambahkan event listener untuk edit judul dengan klik
+                    elements.mainTitle.classList.add('editable-title');
+                    elements.mainTitle.addEventListener('click', () => {
+                        const currentTitle = elements.mainTitle.textContent;
+                        elements.titleInput.value = currentTitle;
+                        elements.titleInput.focus();
+                    });
+                } else {
+                    elements.adminControls.classList.add('hidden');
+                    elements.actionButtons.classList.add('hidden');
+                    elements.mainTitle.classList.remove('editable-title');
+                    elements.mainTitle.removeEventListener('click', () => {});
+                }
+                
+                createTable(false);
+            } else {
+                elements.loginButton.classList.remove('hidden');
+                elements.logoutButton.classList.add('hidden');
+                elements.adminControls.classList.add('hidden');
+                elements.actionButtons.classList.add('hidden');
+                elements.mainTitle.classList.remove('editable-title');
+                elements.mainTitle.removeEventListener('click', () => {});
+                
+                createTable(true);
+            }
+        }
+
+        // Inisialisasi aplikasi
+        function init() {
+            // Load data dari localStorage
+            loadTitle();
+            loadColumnHeaders();
+            loadTeacherData();
+            loadTeachingSchedule();
+            loadLastRecordedDate();
+            loadClassPasswords();
+            
+            // Set event listeners
+            elements.loginButton.addEventListener('click', showLoginModal);
+            elements.logoutButton.addEventListener('click', handleLogout);
+            elements.loginForm.addEventListener('submit', handleLogin);
+            elements.resetButton.addEventListener('click', resetAllCells);
+            elements.addClassButton.addEventListener('click', addClass);
+            elements.removeClassButton.addEventListener('click', removeClass);
+            elements.changeTitleButton.addEventListener('click', changeTitle);
+            elements.viewRecordButton.addEventListener('click', viewRecord);
+            elements.printButton.addEventListener('click', printJournal);
+            elements.addTeacherButton.addEventListener('click', addTeacher);
+            elements.addScheduleButton.addEventListener('click', addSchedule);
+            elements.manageTeachersButton.addEventListener('click', showTeacherModal);
+            elements.manageScheduleButton.addEventListener('click', showScheduleModal);
+            elements.setClassPasswordButton.addEventListener('click', setClassPassword);
+            
+            // Populate class select dropdown
+            populateClassSelect();
+            
+            // Update UI awal
+            updateUI();
+            
+            // Update waktu secara real-time
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            
+            // Tampilkan petunjuk singkat
+            showToast('Selamat datang di Jurnal Guru SMPN 2 Grati', 'info');
+        }
+
+        // Jalankan inisialisasi saat DOM siap
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
